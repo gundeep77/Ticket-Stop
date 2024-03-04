@@ -12,13 +12,13 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import Error from "@/components/components/404";
-import { useState } from "react";
-import SearchAttractions from "@/components/components/SearchAttractions";
+// import { useState } from "react";
+// import SearchAttractions from "@/components/components/SearchAttractions";
 
 export default function attractions({ attractions, totalPages }) {
   const router = useRouter();
   const page = parseInt(router.query.page || "1");
-  const [searchQuery, setSearchQuery] = useState(undefined);
+  // const [searchQuery, setSearchQuery] = useState(undefined);
   const prevPage = page > 1 ? page - 1 : null;
   const nextPage = page < totalPages ? page + 1 : null;
 
