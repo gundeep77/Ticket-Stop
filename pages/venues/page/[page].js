@@ -13,14 +13,14 @@ import { useRouter } from "next/router";
 import Error from "@/components/components/404";
 import Image from "next/image";
 
-export default function attractions({ events, totalPages }) {
+export default function attractions({ venues, totalPages }) {
   const router = useRouter();
   const page = parseInt(router.query.page || "1");
 
   const prevPage = page > 1 ? page - 1 : null;
   const nextPage = page < totalPages ? page + 1 : null;
   let url = `/venues/page/1`;
-  if (page > 0 && page < 51 && Array.isArray(events)) {
+  if (page > 0 && page < 51 && Array.isArray(venues)) {
     return (
       <Layout>
         <br />
@@ -59,18 +59,18 @@ export default function attractions({ events, totalPages }) {
         <br />
         <br />
         <Grid container className="grid" spacing={5}>
-          {events &&
-            events.map((event) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={event.id}>
+          {venues &&
+            venues.map((venue) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={venue.id}>
                 <Card className="card" variant="outlined">
                   <CardActionArea>
-                    <Link href={`/venues/${event.id}`}>
+                    <Link href={`/venues/${venue.id}`}>
                       <Image
                         className="venueMedia"
                         component="img"
                         src={
-                          event.images && event.images[0].url
-                            ? event.images[0].url
+                          venue.images && venue.images[0].url
+                            ? venue.images[0].url
                             : noImage
                         }
                         alt="venue image"
@@ -84,7 +84,7 @@ export default function attractions({ events, totalPages }) {
                           variant="h5"
                           component="h2"
                         >
-                          {event.name}
+                          {venue.name}
                         </Typography>
                       </CardContent>
                     </Link>
@@ -98,13 +98,13 @@ export default function attractions({ events, totalPages }) {
   } else {
     return (
       <Layout>
-        <Error url={url} code={events.code} msg={events.msg}></Error>
+        <Error url={url} code={venues.code} msg={venues.msg}></Error>
       </Layout>
     );
   }
 }
 
-async function getEventsData(page) {
+async function getVenueData(page) {
   try {
     const { data } = await axios.get(
       "https://app.ticketmaster.com/discovery/v2/venues?apikey=7ShMgZO4XCXJNbGkkI47LMDD9GDGXrpG&countryCode=US&page=" +
@@ -120,11 +120,11 @@ async function getEventsData(page) {
 
 export async function getServerSideProps({ params }) {
   const page = parseInt(Number(params.page));
-  const events = await getEventsData(page);
+  const venues = await getVenueData(page);
   const totalPages = 50;
   return {
     props: {
-      events,
+      venues,
       totalPages,
     },
   };

@@ -12,19 +12,29 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import Error from "@/components/components/404";
+import { useState } from "react";
+import SearchAttractions from "@/components/components/SearchAttractions";
 
-export default function attractions({ events, totalPages }) {
+export default function attractions({ attractions, totalPages }) {
   const router = useRouter();
   const page = parseInt(router.query.page || "1");
-
+  const [searchQuery, setSearchQuery] = useState(undefined);
   const prevPage = page > 1 ? page - 1 : null;
   const nextPage = page < totalPages ? page + 1 : null;
+
+  const searchValue = (value) => {
+    setSearchQuery(value);
+  };
+
   let url = `/attractions/page/1`;
-  if (page > 0 && page < 51 && Array.isArray(events)) {
+  if (page > 0 && page < 51 && Array.isArray(attractions)) {
     return (
       <Layout>
         <br />
         <span className="heading">Attractions</span>
+        <br />
+        <br />
+        {/* <SearchAttractions searchValue={searchValue}/> */}
         <br />
         <br />
         <div className="parent">
@@ -59,17 +69,17 @@ export default function attractions({ events, totalPages }) {
         <br />
         <br />
         <Grid container className="grid" spacing={5}>
-          {events &&
-            events.map((event) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={event.id}>
+          {attractions &&
+            attractions.map((attraction) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={attraction.id}>
                 <Card className="card" variant="outlined">
                   <CardActionArea>
-                    <Link href={`/attractions/${event.id}`}>
+                    <Link href={`/attractions/${attraction.id}`}>
                       <Image
                         className="media"
                         component="img"
-                        src={event.images ? getImage(event) : noImage}
-                        alt="event image"
+                        src={attraction.images ? getImage(attraction) : noImage}
+                        alt="attraction image"
                         width={345}
                         height={200}
                       />
@@ -81,20 +91,20 @@ export default function attractions({ events, totalPages }) {
                           variant="h5"
                           component="h2"
                         >
-                          {event.name ? <p>{event.name}</p> : <span></span>}
+                          {attraction.name ? <p>{attraction.name}</p> : <span></span>}
                         </Typography>
                         <Typography variant="body1" component={"div"}>
-                          {event.classifications &&
-                          event.classifications[0] &&
-                          event.classifications[0].segment.name &&
-                          event.classifications[0].genre &&
-                          event.classifications[0].subGenre ? (
+                          {attraction.classifications &&
+                          attraction.classifications[0] &&
+                          attraction.classifications[0].segment.name &&
+                          attraction.classifications[0].genre &&
+                          attraction.classifications[0].subGenre ? (
                             <p className="link">
-                              {event.classifications[0].segment.name +
+                              {attraction.classifications[0].segment.name +
                                 " | " +
-                                event.classifications[0].genre.name +
+                                attraction.classifications[0].genre.name +
                                 " | " +
-                                event.classifications[0].subGenre.name}
+                                attraction.classifications[0].subGenre.name}
                             </p>
                           ) : (
                             <span></span>
@@ -112,16 +122,16 @@ export default function attractions({ events, totalPages }) {
   } else {
     return (
       <Layout>
-        <Error url={url} code={events.code} msg={events.msg}></Error>
+        <Error url={url} code={attractions.code} msg={attractions.msg}></Error>
       </Layout>
     );
   }
 }
 
-function getImage(event) {
+function getImage(attraction) {
   let url = "";
-  event.images &&
-    event.images.forEach((image) => {
+  attraction.images &&
+    attraction.images.forEach((image) => {
       if ((image.width === 1024) & (image.height === 576)) {
         url = image.url;
       }
@@ -129,7 +139,7 @@ function getImage(event) {
   return url;
 }
 
-async function getEventsData(page) {
+async function getAttractionsData(page) {
   try {
     const { data } = await axios.get(
       "https://app.ticketmaster.com/discovery/v2/attractions?apikey=7ShMgZO4XCXJNbGkkI47LMDD9GDGXrpG&countryCode=US&page=" +
@@ -145,11 +155,11 @@ async function getEventsData(page) {
 
 export async function getServerSideProps({ params }) {
   const page = parseInt(Number(params.page));
-  const events = await getEventsData(page);
+  const attractions = await getAttractionsData(page);
   const totalPages = 50;
   return {
     props: {
-      events,
+      attractions,
       totalPages,
     },
   };

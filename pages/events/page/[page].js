@@ -154,7 +154,7 @@ function convertDate(date) {
   return dobFormat;
 }
 
-async function getEventsData(page) {
+async function getEventData(page) {
   try {
     const { data } = await axios.get(
       "https://app.ticketmaster.com/discovery/v2/events?apikey=7ShMgZO4XCXJNbGkkI47LMDD9GDGXrpG&countryCode=US&page=" +
@@ -170,7 +170,7 @@ async function getEventsData(page) {
 
 export async function getServerSideProps({ params }) {
   const page = parseInt(Number(params.page));
-  const events = await getEventsData(page);
+  const events = await getEventData(page);
   const totalPages = 50;
   return {
     props: {
