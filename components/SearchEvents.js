@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
-export default function SearchAttractions(props) {
+export default function SearchEvents(props) {
   const handleChange = (event) => {
     props.searchValue(event.target.value);
   };
